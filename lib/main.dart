@@ -88,8 +88,8 @@ class _Page extends State<Page> {
                 if (Platform.isAndroid) {
                   _setCopyProcess(true);
                   documentWriter.copy(
-                    from: "id.co.pqm.knowledge/hehe.jpeg",
-                    to: "com.whatsapp/hehe.jpeg",
+                    from: "/storage/emulated/0/Download/tes.png",
+                    to: "com.byu.id/tes.png",
                   );
                 }
               },

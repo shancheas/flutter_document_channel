@@ -5,11 +5,11 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.provider.DocumentsContract
-import android.webkit.MimeTypeMap
 import androidx.annotation.RequiresApi
 import androidx.documentfile.provider.DocumentFile
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import java.io.File
 
 /**
  * Created by Kudzoza
@@ -104,10 +104,7 @@ class DocumentWriter(private val context: Activity) {
             val fromSource = fromPath.split("/")
             val toSource = toPath.split("/")
 
-            var from: DocumentFile? = root
-            repeat(fromSource.size) { index ->
-                from = from?.findFile(fromSource[index])
-            }
+            val from: DocumentFile? = DocumentFile.fromFile(File(fromPath))
 
             var to: DocumentFile? = root
             repeat(toSource.size) { index ->
@@ -117,9 +114,7 @@ class DocumentWriter(private val context: Activity) {
                 } else {
                     if (index == toSource.lastIndex) {
                         to?.createFile(
-                                MimeTypeMap.getSingleton()
-                                        .getExtensionFromMimeType(context.contentResolver.getType(from?.uri!!))
-                                        .orEmpty(),
+                                context.contentResolver.getType(from?.uri!!).orEmpty(),
                                 toSource[index]
                         )
                     } else {
