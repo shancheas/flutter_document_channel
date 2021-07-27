@@ -16,15 +16,10 @@ class DocumentWriter {
     platform.invokeMethod("init");
   }
 
-  Future<void> copy({
-    required String from,
-    required String to,
-    required String mime,
-  }) {
+  Future<void> copy({required String from, required String to}) {
     return platform.invokeMethod("copy", <String, String>{
       "from": from,
       "to": to,
-      "mime": mime,
     });
   }
 

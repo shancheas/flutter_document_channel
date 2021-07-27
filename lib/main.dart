@@ -89,8 +89,7 @@ class _Page extends State<Page> {
                   _setCopyProcess(true);
                   documentWriter.copy(
                     from: "id.co.pqm.knowledge/hehe.jpeg",
-                    to: "com.kasep.pisan/hehe.jpeg",
-                    mime: "image/jpeg",
+                    to: "com.whatsapp/hehe.jpeg",
                   );
                 }
               },

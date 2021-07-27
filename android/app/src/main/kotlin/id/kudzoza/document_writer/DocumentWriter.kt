@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.provider.DocumentsContract
+import android.webkit.MimeTypeMap
 import androidx.annotation.RequiresApi
 import androidx.documentfile.provider.DocumentFile
 import io.flutter.plugin.common.MethodCall
@@ -85,8 +86,7 @@ class DocumentWriter(private val context: Activity) {
             "copy" -> {
                 copyDocument(
                         call.argument<String>("from").orEmpty(),
-                        call.argument<String>("to").orEmpty(),
-                        call.argument<String>("mime").orEmpty()
+                        call.argument<String>("to").orEmpty()
                 )
             }
             else -> {
@@ -98,8 +98,7 @@ class DocumentWriter(private val context: Activity) {
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun copyDocument(
             fromPath: String,
-            toPath: String,
-            mime: String
+            toPath: String
     ) {
         write { root ->
             val fromSource = fromPath.split("/")
@@ -117,7 +116,12 @@ class DocumentWriter(private val context: Activity) {
                     target
                 } else {
                     if (index == toSource.lastIndex) {
-                        to?.createFile(mime, toSource[index])
+                        to?.createFile(
+                                MimeTypeMap.getSingleton()
+                                        .getExtensionFromMimeType(context.contentResolver.getType(from?.uri!!))
+                                        .orEmpty(),
+                                toSource[index]
+                        )
                     } else {
                         to?.createDirectory(toSource[index])
                     }
