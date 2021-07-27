@@ -1,7 +1,8 @@
 import 'dart:io';
 
+import 'package:document_writer/document_writer.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 void main() {
   runApp(MyApp());
@@ -25,13 +26,37 @@ class Page extends StatefulWidget {
 }
 
 class _Page extends State<Page> {
-  static const platform = const MethodChannel('id.kudzoza.document_writer/sample');
+  var documentWriter = DocumentWriter();
+
+  var _copyProcess = false;
+
+  void _setCopyProcess(bool isProcessing) {
+    setState(() {
+      _copyProcess = isProcessing;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
-    platform.setMethodCallHandler(_platformCallHandler);
-    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {});
+
+    documentWriter.setOnPermissionAlreadyGranted(() {
+      print("Has Granted");
+    });
+
+    documentWriter.setOnPermissionGranted(() {
+      print("Granted");
+    });
+
+    documentWriter.setOnCopySuccess(() {
+      _setCopyProcess(false);
+      print("Success");
+    });
+
+    documentWriter.setOnCopyFailure(() {
+      _setCopyProcess(false);
+      print("Error");
+    });
   }
 
   @override
@@ -45,44 +70,38 @@ class _Page extends State<Page> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("URI Permission : "),
             MaterialButton(
               child: Text("Request Permission"),
-              color: Colors.blueAccent,
-              textColor: Colors.white,
-              onPressed: () {
-                if (Platform.isAndroid) {
-                  platform.invokeMethod("init");
-                }
-              },
-            ),
-            MaterialButton(
-              child: Text("Create File"),
               color: Colors.black,
               textColor: Colors.white,
               onPressed: () {
                 if (Platform.isAndroid) {
-                  platform.invokeMethod("inject", "id.co.pqm.improve");
+                  documentWriter.init();
                 }
               },
+            ),
+            MaterialButton(
+              child: Text("Copy File"),
+              color: Colors.blueAccent,
+              textColor: Colors.white,
+              onPressed: () {
+                if (Platform.isAndroid) {
+                  _setCopyProcess(true);
+                  documentWriter.copy(
+                    from: "id.co.pqm.knowledge/hehe.jpeg",
+                    to: "com.kasep.pisan/hehe.jpeg",
+                    mime: "image/jpeg",
+                  );
+                }
+              },
+            ),
+            Visibility(
+              visible: _copyProcess,
+              child: CircularProgressIndicator(),
             )
           ],
         ),
       ),
     );
-  }
-
-  Future<dynamic> _platformCallHandler(MethodCall call) async {
-    switch (call.method) {
-      case "on_uri_granted":
-        showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(content: Text("Uri permission has been granted"));
-            });
-        break;
-      case "on_document_created":
-        break;
-    }
   }
 }

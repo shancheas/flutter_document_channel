@@ -1,9 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="id.kudzoza.document_writer">
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-
    <application
         android:label="document_writer"
         android:icon="@mipmap/ic_launcher">
