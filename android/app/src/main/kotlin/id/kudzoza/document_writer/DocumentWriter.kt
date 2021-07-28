@@ -101,28 +101,8 @@ class DocumentWriter(private val context: Activity) {
             toPath: String
     ) {
         write { root ->
-            val fromSource = fromPath.split("/")
-            val toSource = toPath.split("/")
-
             val from: DocumentFile? = DocumentFile.fromFile(File(fromPath))
-
-            var to: DocumentFile? = root
-            repeat(toSource.size) { index ->
-                val target = to?.findFile(toSource[index])
-                to = if (target?.exists() == true) {
-                    target
-                } else {
-                    if (index == toSource.lastIndex) {
-                        to?.createFile(
-                                context.contentResolver.getType(from?.uri!!).orEmpty(),
-                                toSource[index]
-                        )
-                    } else {
-                        to?.createDirectory(toSource[index])
-                    }
-                }
-            }
-
+            var to: DocumentFile? = DocumentFile.fromFile(File(toPath))
 
             try {
                 val inputStream = context.contentResolver.openInputStream(from?.uri!!)!!
